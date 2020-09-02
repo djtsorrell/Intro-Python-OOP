@@ -49,7 +49,7 @@ class Mandelbrot(Fractal):
         for i, array in enumerate(c_number):
             for j, val in enumerate(array):
                 mandel_set[i][j] = super().mandelbrot(val)
-        print(self.z_init)
+
         plt.style.use('dark_background')
         plt.xlabel('Real')
         plt.ylabel('Imaginary')
