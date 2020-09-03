@@ -1,3 +1,17 @@
+"""
+-------------------------------------------------------------------------------
+| Note: This code is deprecated. My original intention was to write a parent  | 
+| class that would handle other iterative methods beyond the mandelbrot set.  |
+|  In the end, this made the code too verbose and wet, especially when        |
+|  implementing the Julia set. I decided to abandon this design and opt for a |
+| Mandelbrot class with a Julia child class (see mandelbrot.py). This new     |
+| design is much simpler and drier. Less is more.                             |
+|                                                                             |
+| djtsorrell                                                                  |
+| 03/09/2020                                                                  |
+-------------------------------------------------------------------------------
+
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 
