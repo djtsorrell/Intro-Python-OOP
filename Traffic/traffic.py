@@ -11,7 +11,7 @@ class Traffic:
 
     road = 10
 
-    def __init__(self, density, iters):
+    def __init__(self, density, iters, update_method=None):
         self.iters = iters
         self.cars_init = int(density*self.road)
 
@@ -20,6 +20,17 @@ class Traffic:
         random.shuffle(self.cars)
         # Converts list to array
         self.cars = np.asarray(self.cars)
+
+        if update_method is None:
+            self.update_method = self.update
+        elif update_method == 1:
+            self.update_method = self.prob_update
+        else:
+            raise SystemExit(
+                'Error: Not a valid update method.\n'
+                'Use either 1 for prob_update or leave blank (i.e. None) '
+                'for simple update method.'
+            )
 
     def update(self):
         cars_update = np.zeros(self.road, dtype=int)
@@ -53,12 +64,44 @@ class Traffic:
 
         # Update self.cars with movements.
         self.cars = cars_update
-
         return car_moves
-        # return self.cars, self.car_moves
+
+    def prob_update(self):
+        ''' Update method based on probabilites. '''
+
+        cars_update = np.zeros(self.road, dtype=int)
+        car_moves = 0
+        for i, car in enumerate(self.cars):
+            # Update method for all but the last index.
+            if i < len(self.cars)-1:
+                # If there is a car in the current index and no car in the
+                # next index, move the car.
+                if car == 1 and self.cars[i+1] == 0:
+                    cars_update[i] = 0
+                    cars_update[i+1] = 1
+                    car_moves += 1
+                # If there is a car at the current index and a car in the
+                # next index, do not move the car.
+                elif car == 1 and self.cars[i+1] == 1:
+                    cars_update[i] = 1
+            # Update method for last index.
+            else:
+                # If the last index has a car and the first index does not,
+                # move the car to the first index.
+                if car == 1 and self.cars[0] == 0:
+                    cars_update[i] = 0
+                    cars_update[0] = 1
+                    car_moves += 1
+                # If the last index has a car and the first does too, keep
+                # the car in the last index.
+                elif car == 1 and self.cars[0] == 1:
+                    cars_update[i] = 1
+        # Update self.cars with movements.
+        self.cars = cars_update
+        return car_moves
 
     def getVel(self):
-        car_moves = self.update()
+        car_moves = self.update_method()
         self.av_vel = float(car_moves / self.cars_init)
         return self.av_vel
 
@@ -77,7 +120,7 @@ class Traffic:
 
         traffic[0] = self.cars
         for i in range(1, self.iters):
-            self.update()
+            self.update_method()
             traffic[i] = self.cars
 
         colors = ['k', 'r']
@@ -110,7 +153,7 @@ class Traffic:
 
 
 cars = Traffic(0.6, 10)
-# Traffic.show(cars)
-Traffic.show_vel(cars)
+Traffic.show(cars)
+# Traffic.show_vel(cars)
 # for i in range(5):
 #    print(Traffic.getVel(cars))
