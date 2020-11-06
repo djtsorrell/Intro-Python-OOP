@@ -1,5 +1,7 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.animation import FuncAnimation
 
 
 class Orbit:
@@ -30,13 +32,6 @@ class Orbit:
         self.force = np.zeros([rows, 2])
 
         self.objects = rows
-        # print(self.names)
-        # print(self.mass)
-        # print(self.pos)
-        # print(self.vel)
-        # print(self.color)
-        # print(self.accel)
-        # print(self.force)
 
     def getForce(self):
         '''Returns the gravitational force using Newtonian mechanics.'''
@@ -69,13 +64,52 @@ class Orbit:
             self.pos[i] = self.pos[i] + self.vel[i]*self.timestep
         return self.pos
 
+    def anim_init(self):
+        return self.patches
 
-orbits = Orbit('marsandmoons.csv', 0.1)
-print('Forces')
-print(Orbit.getForce(orbits))
-print('Accels')
-print(Orbit.getAccel(orbits))
-print('Vels')
-print(Orbit.vel_step(orbits))
-print('Pos')
-print(Orbit.pos_step(orbits))
+    def animate(self, i):
+        '''Runs the various update methods needed for the animation.'''
+        self.getForce()
+        self.getAccel()
+        self.vel_step()
+        self.pos_step()
+        for i in range(self.objects):
+            self.patches[i].center = (self.pos[i][0], self.pos[i][1])
+        return self.patches
+
+    def show(self):
+        '''Setup and display the animation.'''
+        plt.style.use('dark_background')
+        fig = plt.figure()
+        ax = plt.axes()
+        self.patches = []
+        for i in range(self.objects):
+            self.patches.append(plt.Circle((self.pos[i][0], self.pos[i][1]),
+                                           radius=5E5, color=self.color[i],
+                                           animated=True))
+            ax.add_patch(self.patches[i])
+
+        # Ensures planets fit in plot.
+        r_max = self.pos[self.objects-1][0] + 5.0E6
+        ax.set_xlim(-r_max, r_max)
+        ax.set_ylim(-r_max, r_max)
+
+        anim = FuncAnimation(fig, self.animate, frames=500,
+                             init_func=self.anim_init, repeat=True,
+                             interval=50, blit=True)
+
+        plt.show()
+
+
+orbits = Orbit('marsandmoons.csv', 90)
+Orbit.show(orbits)
+# print('Forces')
+# print(Orbit.getForce(orbits))
+# print('Accels')
+# print(Orbit.getAccel(orbits))
+# print('Vels')
+# print(Orbit.vel_step(orbits))
+# print('Pos_update')
+# print(Orbit.animate(orbits))
+# print('Pos_update2')
+# print(Orbit.animate(orbits))
