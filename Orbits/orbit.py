@@ -40,9 +40,10 @@ class Orbit:
             for j in range(self.objects):
                 if i != j:
                     delta_pos = self.pos[j]-self.pos[i]
-                    forces += \
-                        (self.grav_const*self.mass[i]*self.mass[j])\
-                        * (delta_pos) / (np.linalg.norm(delta_pos))**3.0
+                    forces += (
+                        (self.grav_const*self.mass[i]*self.mass[j]*delta_pos)
+                        / (np.linalg.norm(delta_pos))**3.0
+                    )
             self.force[i] = forces
         return self.force
 
