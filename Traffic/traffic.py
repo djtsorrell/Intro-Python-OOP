@@ -21,6 +21,7 @@ class Traffic:
         # Converts list to array
         self.cars = np.asarray(self.cars)
 
+        # Defines update method to be used in the simulation.
         if update_method is None:
             self.update_method = self.update
         elif update_method == 1:
@@ -32,7 +33,16 @@ class Traffic:
                 'for simple update method.'
             )
 
+    @classmethod
+    def setRoad(cls, road_input):
+        '''Set the road length.'''
+        cls.road = road_input
+
     def update(self):
+        '''
+        A simple update method which moves cars if and only if the space in
+        front is empty.
+        '''
         cars_update = np.zeros(self.road, dtype=int)
         car_moves = 0
 
@@ -68,7 +78,6 @@ class Traffic:
 
     def prob_update(self):
         ''' Update method based on probabilites. '''
-
         cars_update = np.zeros(self.road, dtype=int)
         car_moves = 0
         for i, car in enumerate(self.cars):
@@ -101,11 +110,16 @@ class Traffic:
         return car_moves
 
     def getVel(self):
+        '''Returns the average velocity of the traffic for one iteration.'''
         car_moves = self.update_method()
-        self.av_vel = float(car_moves / self.cars_init)
-        return self.av_vel
+        av_vel = float(car_moves / self.cars_init)
+        return av_vel
 
     def show(self):
+        '''
+        Displays a 2D grid with the car positions along the x axis and the
+        iterations along the y axis.
+        '''
         plt.style.use('dark_background')
         plt.title('Traffic Simulation')
 
@@ -136,6 +150,11 @@ class Traffic:
         plt.show()
 
     def show_vel(self):
+        '''
+        Plots the average velocity of the traffic over the current
+        simulation.
+        '''
+        # Initial velocity of traffic is 0.
         velocities = [0]
         for _ in range(1, self.iters):
             velocities.append(self.getVel())

@@ -16,6 +16,7 @@ class Orbit:
         data = pd.read_csv(filename)
         self.names = np.array(data.Object)
         self.mass = np.array(data.Mass)
+        self.radius = np.array(data.Radius)
         self.color = np.array(data.Color)
 
         # Finds the number of objects listed in the csv file
@@ -80,20 +81,25 @@ class Orbit:
 
     def show(self):
         '''Setup and display the animation.'''
+        # Figure setup
         plt.style.use('dark_background')
         fig = plt.figure()
+        plt.title('Orbital Motion')
+        # Axes setup
         ax = plt.axes()
+        ax.set_aspect('equal')
+        # Ensures planets fit in plot.
+        r_max = self.pos[self.objects-1][0]*1.3
+        ax.set_xlim(-r_max, r_max)
+        ax.set_ylim(-r_max, r_max)
+        # Patches setup
         self.patches = []
         for i in range(self.objects):
             self.patches.append(plt.Circle((self.pos[i][0], self.pos[i][1]),
-                                           radius=5E5, color=self.color[i],
+                                           radius=self.radius[i],
+                                           color=self.color[i],
                                            animated=True))
             ax.add_patch(self.patches[i])
-
-        # Ensures planets fit in plot.
-        r_max = self.pos[self.objects-1][0] + 5.0E6
-        ax.set_xlim(-r_max, r_max)
-        ax.set_ylim(-r_max, r_max)
 
         anim = FuncAnimation(fig, self.animate, frames=500,
                              init_func=self.anim_init, repeat=True,
@@ -102,7 +108,7 @@ class Orbit:
         plt.show()
 
 
-orbits = Orbit('marsandmoons.csv', 90)
+orbits = Orbit('solarsystem.csv', 43200)
 Orbit.show(orbits)
 # print('Forces')
 # print(Orbit.getForce(orbits))
