@@ -5,8 +5,8 @@ from matplotlib.animation import FuncAnimation
 
 
 class Orbit:
-
-    grav_const = 6.6743E-11
+    # pylint: disable=too-many-instance-attributes
+    grav_const = 6.6743e-11
 
     """Docstring for Orbit. """
 
@@ -21,6 +21,10 @@ class Orbit:
 
         # Finds the number of objects listed in the csv file
         rows = int(data.shape[0])
+        # Initialises empty arrays for kinetic and gravitational potential
+        # energies.
+        self.kinetic = np.zeros(rows)
+        self.potential = np.zeros(rows)
         # Create 2D arrays with x coordinates in the left hand column and y
         # coordinates in the right.
         self.pos = np.zeros([rows, 2])
@@ -33,44 +37,46 @@ class Orbit:
         self.force = np.zeros([rows, 2])
 
         self.objects = rows
+        # Initialise pathces to be filled in the show method.
+        self.patches = []
 
     def getForce(self):
-        '''Returns the gravitational force using Newtonian mechanics.'''
+        """Returns the gravitational force using Newtonian mechanics."""
         for i in range(self.objects):
             forces = 0
             for j in range(self.objects):
                 if i != j:
-                    delta_pos = self.pos[j]-self.pos[i]
+                    delta_pos = self.pos[j] - self.pos[i]
                     forces += (
-                        (self.grav_const*self.mass[i]*self.mass[j]*delta_pos)
-                        / (np.linalg.norm(delta_pos))**3.0
+                        (Orbit.grav_const * self.mass[i] * self.mass[j]
+                         * delta_pos) / (np.linalg.norm(delta_pos)) ** 3.0
                     )
             self.force[i] = forces
         return self.force
 
     def getAccel(self):
-        '''Returns the acceleration of the planetary bodies.'''
+        """Returns the acceleration of the planetary bodies."""
         for i in range(self.objects):
-            self.accel[i] = self.force[i]/self.mass[i]
+            self.accel[i] = self.force[i] / self.mass[i]
         return self.accel
 
     def vel_step(self):
-        '''Increments the velocities by one timestep.'''
+        """Increments the velocities by one timestep."""
         for i in range(self.objects):
-            self.vel[i] = self.vel[i] + self.accel[i]*self.timestep
+            self.vel[i] = self.vel[i] + self.accel[i] * self.timestep
         return self.vel
 
     def pos_step(self):
-        '''Increments the positions by one timestep.'''
+        """Increments the positions by one timestep."""
         for i in range(self.objects):
-            self.pos[i] = self.pos[i] + self.vel[i]*self.timestep
+            self.pos[i] = self.pos[i] + self.vel[i] * self.timestep
         return self.pos
 
     def anim_init(self):
         return self.patches
 
     def animate(self, i):
-        '''Runs the various update methods needed for the animation.'''
+        """Runs the various update methods needed for the animation."""
         self.getForce()
         self.getAccel()
         self.vel_step()
@@ -80,38 +86,82 @@ class Orbit:
         return self.patches
 
     def show(self):
-        '''Setup and display the animation.'''
+        """Setup and display the animation."""
         # Figure setup
-        plt.style.use('dark_background')
+        plt.style.use("dark_background")
         fig = plt.figure()
-        plt.title('Orbital Motion')
+        plt.title("Orbital Motion")
         # Axes setup
         ax = plt.axes()
-        ax.set_aspect('equal')
+        ax.set_aspect("equal")
         # Ensures planets fit in plot.
-        r_max = self.pos[self.objects-1][0]*1.3
+        r_max = self.pos[self.objects - 1][0] * 1.3
         ax.set_xlim(-r_max, r_max)
         ax.set_ylim(-r_max, r_max)
         # Patches setup
-        self.patches = []
         for i in range(self.objects):
-            self.patches.append(plt.Circle((self.pos[i][0], self.pos[i][1]),
-                                           radius=self.radius[i],
-                                           color=self.color[i],
-                                           animated=True))
+            self.patches.append(
+                plt.Circle(
+                    (self.pos[i][0], self.pos[i][1]),
+                    radius=self.radius[i],
+                    color=self.color[i],
+                    animated=True,
+                )
+            )
             ax.add_patch(self.patches[i])
 
-        anim = FuncAnimation(fig, self.animate, frames=500,
-                             init_func=self.anim_init, repeat=True,
-                             interval=50, blit=True)
+        anim = FuncAnimation(
+            fig,
+            self.animate,
+            frames=500,
+            init_func=self.anim_init,
+            repeat=True,
+            interval=50,
+            blit=True,
+        )
 
         plt.show()
 
+    def getKinetic(self):
+        """Returns the kinetic energy of the objects."""
+        for i in range(self.objects):
+            self.kinetic[i] = (0.5 * self.mass[i]) * (
+                np.linalg.norm(self.vel[i])
+            ) ** 2.0
+        return self.kinetic
 
-orbits = Orbit('solarsystem.csv', 43200)
+    def getTotalKinetic(self):
+        """Returns the total kinetic energy of all objects."""
+        return np.sum(self.kinetic)
+
+    def getPotenital(self):
+        """Returns the gravitational potential energy of the objects."""
+        for i in range(1, self.objects):
+            self.potential[i] = -(
+                1.0 * self.mass[0] * self.mass[i] * Orbit.grav_const
+            ) / (np.linalg.norm(self.pos[i] - self.pos[0]))
+        return self.potential
+        # for i in range(self.objects):
+        #    potential = 0
+        #    for j in range(self.objects):
+        #        potential += (
+        #            -1.0 * np.linalg.norm(self.force[i])
+        #            * (np.linalg.norm(self.pos[j] - self.pos[i]))
+        #        )
+        #    self.potential[i] = potential
+        # return self.potential
+
+    def getTotalPotential(self):
+        """Returns the total gravitational potential of the objects"""
+        return np.sum(self.potential)
+
+
+orbits = Orbit("solarsystem.csv", 43200)
 Orbit.show(orbits)
-# print('Forces')
-# print(Orbit.getForce(orbits))
+print("Kinetic Energy")
+print(Orbit.getKinetic(orbits))
+print("Potential Energy")
+print(Orbit.getPotenital(orbits))
 # print('Accels')
 # print(Orbit.getAccel(orbits))
 # print('Vels')
