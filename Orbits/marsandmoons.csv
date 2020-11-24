@@ -1,4 +1,4 @@
 Object,Mass,r_x,r_y,v_x,v_y,Radius,Color
 Mars,6.4185E23,0,0,0,0,3E6,red
-Phobos,1.06E16,9.3773E6,0,0,2.1374E3,3E5,gray
-Deimos,1.8E15,2.3463E7,0,0,1.3512E3,6E4,white
+Phobos,1.06E16,9.3773E6,0,0,2.1374E3,5E5,gray
+Deimos,1.8E15,2.3463E7,0,0,1.3512E3,3E5,white
