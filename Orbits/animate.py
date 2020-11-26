@@ -35,7 +35,7 @@ class Animate(Orbit):
         for i in range(self.objects):
             self.patches[i].center = (self.pos[i][0], self.pos[i][1])
 
-        # Updates energy plot..
+        # Updates energy plot.
         self.time.append(frame * self.timestep)
         self.energy.append(super().getKinetic())
         self.patches[self.objects].set_xdata(self.time)
@@ -45,7 +45,7 @@ class Animate(Orbit):
 
     def show(self, total_frames):
         """Setup and display the animation."""
-        # Figure setup..
+        # Figure setup.
         plt.style.use("dark_background")
         fig = plt.figure()
         # Add extra horizontal space between subplots.
