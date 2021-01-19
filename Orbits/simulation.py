@@ -6,7 +6,7 @@ from animate import Animate
 def main():
     filename = str(input("Filename (csv): "))
     if ".csv" not in filename:
-        sys.exit("Input in not a csv file!")
+        sys.exit("Input is not a csv file!")
 
     while True:
         try:
