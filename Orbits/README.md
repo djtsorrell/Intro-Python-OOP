@@ -12,4 +12,4 @@ orbital motion, the kinetic energy of the system is plotted.
 
 ![Animation](mars.gif?raw=true)
 
-Test edit to verify SSH key.
+~~Test edit to verify SSH key.~~
