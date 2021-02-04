@@ -48,6 +48,10 @@ class Orbit:
                                 * delta_pos)
                                / (np.linalg.norm(delta_pos)) ** 3.0)
             self.force[i] = forces
+           # print(f'forces = {forces}')
+           # print(f'delta_pos = {np.linalg.norm(delta_pos)}')
+           # print()
+            # self.potential[i] = forces * delta_pos
         return self.force
 
     def getAccel(self):
@@ -69,8 +73,31 @@ class Orbit:
         return self.pos
 
     def getKinetic(self):
-        """Returns the total kinetic energy of the objects."""
+        """Returns the total kinetic energy of the system."""
         for i in range(self.objects):
             self.kinetic[i] = ((0.5 * self.mass[i])
                                * (np.linalg.norm(self.vel[i])) ** 2.0)
         return np.sum(self.kinetic)
+
+    def getPotential(self):
+        """Returns the gravitational potential energy of the system."""
+        # TODO: Fix method to account for negative potential.
+        for i in range(self.objects):
+            for j in range(self.objects):
+                if i != j:
+                    potential = (
+                        Orbit.grav_const
+                        * (self.mass[i] * self.mass[j])
+                        / np.linalg.norm(self.pos[j] - self.pos[i])
+                    )
+            self.potential[i] = potential
+        return np.sum(self.potential)
+
+    def getEnergy(self):
+        """Returns the total energy of the system."""
+        print(self.getKinetic() + self.getPotential())
+        return self.getKinetic() + self.getPotential()
+
+
+orbits = Orbit('marsandmoons.csv', 86)
+print(orbits.getEnergy())

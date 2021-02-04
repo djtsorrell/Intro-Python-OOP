@@ -35,7 +35,8 @@ class Animate(Orbit):
 
         # Updates energy plot.
         self.time.append(frame * self.timestep)
-        self.energy.append(super().getKinetic())
+        # self.energy.append(super().getKinetic())
+        self.energy.append(super().getEnergy())
         self.patches[self.objects].set_xdata(self.time)
         self.patches[self.objects].set_ydata(self.energy)
 
@@ -60,12 +61,15 @@ class Animate(Orbit):
 
         # Axes setup for energy plot.
         ax1 = fig.add_subplot(1, 2, 2, label="energy")
-        ax1.set_title("Kinetic Energy")
-        ax1.set_ylim(2.5E22, 2.65E22)  # based off expected values for energy.
+        #ax1.set_title("Kinetic Energy")
+        ax1.set_title("Total Energy")
+        # based off expected values for energy.
+        # ax1.set_ylim(2.5E22, 2.65E22)
+        ax1.set_ylim(2.8E22, 3.0E22)
         x_max = self.timestep * total_frames  # i.e. the total duration.
         ax1.set_xlim(0, x_max)
         ax1.set_xlabel("Time / s")
-        ax1.set_ylabel("Kinetic Energy / J")
+        ax1.set_ylabel("Potential Energy / J")
         # Ensures energy plot uses scientific notation (numbers are large).
         plt.Axes.ticklabel_format(ax1, style="scientific", scilimits=(-5, 3))
 
