@@ -61,13 +61,11 @@ class Animate(Orbit):
 
         # Axes setup for energy plot.
         ax1 = fig.add_subplot(1, 2, 2, label="energy")
-        # ax1.set_title("Kinetic Energy")
         ax1.set_title("Total Energy")
-        # based off expected values for energy.
-        # ax1.set_ylim(2.5E22, 2.65E22)
-        ax1.set_ylim(-8.0E22, -7.6E22)
         x_max = self.timestep * total_frames  # i.e. the total duration.
+        y_value = super().getEnergy()  # initial energy value
         ax1.set_xlim(0, x_max)
+        ax1.set_ylim(y_value*0.99, y_value*1.01)
         ax1.set_xlabel("Time / s")
         ax1.set_ylabel("Total Energy / J")
         # Ensures energy plot uses scientific notation (numbers are large).
