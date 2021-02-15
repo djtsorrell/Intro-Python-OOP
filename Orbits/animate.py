@@ -98,6 +98,6 @@ class Animate(Orbit):
             blit=True,
         )
 
-        plt.show()
+        # plt.show()
 
-        # anim.save("mars.gif", writer="imagemagick", fps=30)
+        anim.save("mars.gif", writer="imagemagick", fps=30)
